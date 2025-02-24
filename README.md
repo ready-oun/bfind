@@ -1,25 +1,25 @@
-# BIND 
-*"바인드(BIND)는 독자와 콘텐츠를 한데 묶어, 안전한 소장과 참여를 통해 새로운 가치와 경험을 창출하는 플랫폼입니다. 'Bind'는 '묶다, 결합하다'의 의미를 담고 있으며, 독자가 콘텐츠와 깊은 연결을 이루고 자신만의 이야기를 창조할 수 있도록 돕습니다."*
+# BFIND 
+*"비파인드(BFIND)는 독자와 콘텐츠를 한데 묶어(BIND) 새로운 이야기를 찾아가는(FIND) 혁신적인 플랫폼입니다. 안전한 소장과 참여를 통해 새로운 가치와 경험을 창출하며, 독자가 콘텐츠와 깊은 연결을 이루고 자신만의 이야기를 창조할 수 있도록 돕습니다."*
 
-> **BIND(바인드)** 는 'Bind'라는 영어 단어에서 영감을 받아, 독자와 콘텐츠, 그리고 창의적 아이디어를 하나로 결합하여 새로운 가치를 창출한다는 철학을 담고 있습니다. 
+> **BFIND(비파인드)** 는 'Bind'와 'Find'의 결합으로, 독자와 콘텐츠를 하나로 묶고(BIND) 새로운 이야기를 함께 찾아가는(FIND) 철학을 담고 있습니다.
 > 
-> 이 이름은 단순히 콘텐츠를 소비하는 것을 넘어, 사용자가 직접 자신의 이야기를 제안하고 소장함으로써, 보다 깊은 연결과 참여를 경험할 수 있도록 한다는 의미를 내포합니다. 
+> 이 이름은 단순히 콘텐츠를 소비하는 것을 넘어, 사용자가 직접 자신의 이야기를 제안하고 소장함으로써, 보다 깊은 연결과 참여를 경험할 수 있도록 한다는 의미를 내포합니다.
 > 
-> BIND는 안전한 DRM 기술과 혁신적인 리워드 시스템을 통해 독자와 제작자 모두에게 신뢰와 지속 가능한 가치를 제공하는 디지털 플랫폼을 지향합니다.
+> BFIND는 안전한 DRM 기술과 혁신적인 리워드 시스템을 통해 독자와 제작자 모두에게 신뢰와 지속 가능한 가치를 제공하는 디지털 플랫폼을 지향합니다.
 
-*"BIND is a platform that creates new value and experiences by bringing readers and content together through secure ownership and participation. The name 'Bind' carries the meaning of 'to tie, to combine,' helping readers form deep connections with content and create their own stories."*
+*"BFIND is an innovative platform that binds readers with content (BIND) and helps them find their own stories (FIND). Through secure ownership and participation, it creates new value and experiences, helping readers form deep connections with content and create their own stories."*
 
-> **BIND** is inspired by the English word 'Bind,' embodying a philosophy of creating new value by combining readers, content, and creative ideas into one.
+> **BFIND** combines 'Bind' and 'Find', embodying a philosophy of binding readers and content together while finding new stories together.
 >
 > The name implies going beyond mere content consumption, allowing users to experience deeper connection and participation by proposing and owning their own stories.
 >
-> BIND aims to be a digital platform that provides trust and sustainable value to both readers and creators through secure DRM technology and an innovative reward system.
+> BFIND aims to be a digital platform that provides trust and sustainable value to both readers and creators through secure DRM technology and an innovative reward system.
 
-## Web Content Platform with DRM & Reward System
+## Web Content Platform with DRM & Story Proposal System
 
-이 프로젝트는 고급 DRM 보호, 유연한 결제 시스템, 그리고 독자 참여 기반의 리워드 기능을 결합한 웹 콘텐츠 플랫폼을 구축하는 것을 목표로 합니다. 아래 문서는 한국어 버전과 English Version으로 구분되어 있어, 프로젝트의 전반적인 기획, 핵심 기능, 차별화 기능, 기술 스택, 시스템 아키텍처, 설치 및 개발 프로세스를 상세하게 설명합니다.
+이 프로젝트는 고급 DRM 보호, 유연한 결제 시스템, 그리고 독자 참여 기반의 리워드 기능을 결합한 웹 콘텐츠 플랫폼을 구축하는 것을 목표로 합니다. 특히 독자들이 직접 스토리를 제안하고 채택 시 보상받는 혁신적인 'FIND' 시스템을 통해 기존 플랫폼과 차별화됩니다.
 
-This project aims to build a web content platform that combines advanced DRM protection, flexible payment systems, and reader participation-based reward features. The documentation below is divided into Korean and English versions, providing detailed explanations of the project's overall planning, core features, differentiating features, tech stack, system architecture, installation, and development processes.
+This project aims to build a web content platform that combines advanced DRM protection, flexible payment systems, and reader participation-based reward features. It differentiates itself from existing platforms through its innovative 'FIND' system, where readers can propose stories and receive rewards when adopted.
 
 ---
 
@@ -46,12 +46,16 @@ This project aims to build a web content platform that combines advanced DRM pro
    - Java 및 Kotlin/Spring을 활용한 안정적, 안전한 콘텐츠 및 정산 관리
 
 ### 차별화 기능
-1. **커스텀 스토리 생성 및 독자 제안 기능**
+1. **커스텀 스토리 생성 및 독자 제안 기능 (FIND System)**
    - 독자가 직접 캐릭터, 스토리라인, 장르, 세계관 등을 선택하여 커스텀 스토리 요약 생성
    - AI 또는 규칙 기반 엔진을 통한 실시간 결과 제공 및 유사 콘텐츠 추천/리퀘스트
+   - 제안된 스토리의 평가 및 피드백 시스템
+   - 채택된 스토리의 제작 과정 참여 기회
+
 2. **독자 리워드 시스템**
    - 독자가 제안한 스토리 설정이 채택되어 실제 콘텐츠로 제작되면, 리워드 포인트 지급
    - 명확한 평가 기준과 절차를 통해 투명하게 운영
+
 3. **영구 소장권 및 디지털 자산 인증**
    - 콘텐츠 구매 시 단순 이용권이 아닌 '영구 소장권'을 발급
    - 블록체인 기반 디지털 인증(예: NFT 개념) 및 분산 저장 기술을 도입하여, 플랫폼 운영 중단 시에도 독자 소유권 보장
@@ -148,12 +152,16 @@ This project aims to build a secure and scalable platform for digital content su
    - Stable and secure content and settlement management using Java and Kotlin/Spring
 
 ### Differentiating Features
-1. **Custom Story Creation and Reader Proposal Feature**
+1. **Custom Story Creation and Reader Proposal Feature (FIND System)**
    - Readers can create custom story summaries by selecting characters, storylines, genres, and world settings
    - Real-time results and similar content recommendations/requests through AI or rule-based engines
+   - Story evaluation and feedback system
+   - Participation in the creation process of adopted stories
+
 2. **Reader Reward System**
    - Reward points awarded when reader-proposed story settings are adopted for actual content
    - Transparent operation through clear evaluation criteria and procedures
+
 3. **Permanent Ownership Rights and Digital Asset Certification**
    - Issue 'permanent ownership rights' rather than simple usage rights when purchasing content
    - Implement blockchain-based digital certification (e.g., NFT concept) and distributed storage technology to guarantee reader ownership even if platform operation ceases

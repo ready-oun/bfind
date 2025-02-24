@@ -61,11 +61,22 @@ frontend/build/
 frontend/.env*
 
 # Backend specific
-backend/dist/
+backend/.gradle
 backend/build/
-backend/.env*
-backend/uploads/
-backend/logs/
+backend/out/
+!backend/gradle/wrapper/gradle-wrapper.jar
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+backend/bin/
+backend/.kotlin
+backend/HELP.md
 
 # Infrastructure
 .terraform/
@@ -78,6 +89,8 @@ terraform.rc
 # Docker
 .docker/
 docker-compose.override.yml
+.env
+postgres_data/
 
 # Misc
 .cache/
@@ -87,7 +100,3 @@ docker-compose.override.yml
 *.sw?
 .directory
 *~
-
-# Docker
-.env
-postgres_data/
