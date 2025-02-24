@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Box, Skeleton, LinearProgress, IconButton, Paper } from '@mui/material'
+import { Container, Box, Skeleton, LinearProgress, IconButton, Paper, Typography, Button } from '@mui/material'
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
@@ -29,9 +29,11 @@ export default function EpisodeViewer() {
   const navigate = useNavigate()
   const [loadedImages, setLoadedImages] = useState<number[]>([])
   const [showNavigation, setShowNavigation] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const imageCache = useRef<Set<string>>(new Set())
   const isLoadingComplete = useRef<boolean>(false)
-  const navigationTimeoutRef = useRef<NodeJS.Timeout>()
+  const navigationTimeoutRef = useRef<number>()
   
   const currentEpisodeData = useMemo(() => 
     getMockEpisodeData(episodeId!),
@@ -45,27 +47,37 @@ export default function EpisodeViewer() {
     window.scrollTo(0, 0)
   }, [episodeId])
 
-  // 이미지 프리로딩
+  // 이미지 프리로딩 에러 처리 추가
   useEffect(() => {
     const preloadImages = async () => {
-      const images = currentEpisodeData.contentImages.map((url, index) => {
-        if (imageCache.current.has(`${episodeId}-${url}`)) {
-          handleImageLoad(index)
-          return null
-        }
+      try {
+        setIsLoading(true)
+        setError(null)
         
-        return new Promise((resolve) => {
-          const img = new Image()
-          img.onload = () => {
-            imageCache.current.add(`${episodeId}-${url}`)
+        const images = currentEpisodeData.contentImages.map((url, index) => {
+          if (imageCache.current.has(`${episodeId}-${url}`)) {
             handleImageLoad(index)
-            resolve(null)
+            return null
           }
-          img.src = url
+          
+          return new Promise((resolve, reject) => {
+            const img = new Image()
+            img.onload = () => {
+              imageCache.current.add(`${episodeId}-${url}`)
+              handleImageLoad(index)
+              resolve(null)
+            }
+            img.onerror = () => reject(new Error(`Failed to load image ${index}`))
+            img.src = url
+          })
         })
-      })
 
-      await Promise.all(images.filter(Boolean))
+        await Promise.all(images.filter(Boolean))
+        setIsLoading(false)
+      } catch (err) {
+        setError('이미지를 불러오는 중 오류가 발생했습니다.')
+        setIsLoading(false)
+      }
     }
 
     preloadImages()
@@ -107,14 +119,22 @@ export default function EpisodeViewer() {
   const handleImageInteraction = useCallback(() => {
     setShowNavigation(prev => !prev)
     
-    // 3초 후 네비게이션 숨기기
     if (navigationTimeoutRef.current) {
-      clearTimeout(navigationTimeoutRef.current)
+      window.clearTimeout(navigationTimeoutRef.current)
     }
     
-    navigationTimeoutRef.current = setTimeout(() => {
+    navigationTimeoutRef.current = window.setTimeout(() => {
       setShowNavigation(false)
     }, 3000)
+  }, [])
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        window.clearTimeout(navigationTimeoutRef.current)
+      }
+    }
   }, [])
 
   // 네비게이션 핸들러
@@ -154,6 +174,31 @@ export default function EpisodeViewer() {
   }, [currentEpisodeData, handleNavigation])
 
   if (contentType !== 'webtoon') return null
+  
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 3, 
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2 
+          }}
+        >
+          <Typography color="error">{error}</Typography>
+          <Button 
+            variant="contained" 
+            onClick={() => window.location.reload()}
+          >
+            다시 시도
+          </Button>
+        </Paper>
+      </Container>
+    )
+  }
 
   return (
     <>
@@ -189,12 +234,25 @@ export default function EpisodeViewer() {
       </Paper>
 
       <Container maxWidth="md" sx={{ py: 2, px: { xs: 0, sm: 2 }, mb: 10 }}>
-        {!isLoadingComplete.current && loadedImages.length < currentEpisodeData.contentImages.length && (
-          <LinearProgress 
-            variant="determinate" 
-            value={(loadedImages.length / currentEpisodeData.contentImages.length) * 100}
-            sx={{ mb: 2 }}
-          />
+        {isLoading && loadedImages.length < currentEpisodeData.contentImages.length && (
+          <Box sx={{ width: '100%', mt: 2 }}>
+            <LinearProgress 
+              variant="determinate" 
+              value={(loadedImages.length / currentEpisodeData.contentImages.length) * 100}
+              sx={{ 
+                mb: 2,
+                height: 8,
+                borderRadius: 1
+              }}
+            />
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              align="center"
+            >
+              이미지 로딩 중... ({loadedImages.length}/{currentEpisodeData.contentImages.length})
+            </Typography>
+          </Box>
         )}
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
