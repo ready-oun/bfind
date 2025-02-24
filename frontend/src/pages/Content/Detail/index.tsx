@@ -1,19 +1,52 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Box, Typography, Divider } from '@mui/material'
+import { Container, Box, Typography, Divider, Chip } from '@mui/material'
 
 // 임시 더미 데이터
 const mockContentDetail = {
   id: 1,
   title: '웹툰 제목',
-  author: '작가이름',
+  authors: [
+    { name: '글/그림', role: '작가이름' },
+    { name: '스토리', role: '스토리작가' },
+    { name: '각색', role: '각색작가' }
+  ],
   description: '작품 설명입니다. 재미있는 이야기가 펼쳐집니다.',
   thumbnail: 'https://placehold.co/400x600',
+  status: '연재중' as ContentStatus,
+  isOriginal: true,  // 오리지널 여부 추가
   episodes: [
     { id: 1, title: '1화', date: '2024.02.01', thumbnail: 'https://placehold.co/200x200' },
     { id: 2, title: '2화', date: '2024.02.08', thumbnail: 'https://placehold.co/200x200' },
     { id: 3, title: '3화', date: '2024.02.15', thumbnail: 'https://placehold.co/200x200' },
   ]
 }
+
+// 상단에 타입 정의 추가
+type ContentStatus = '연재중' | '완결' | '휴재중' | '무료공개' | '신작';
+
+// status별 스타일 설정
+const getStatusChipProps = (status: ContentStatus) => {
+  switch (status) {
+    case '연재중':
+      return { color: 'primary' as const };
+    case '완결':
+      return { color: 'success' as const };
+    case '휴재중':
+      return { color: 'warning' as const };
+    case '무료공개':
+      return { 
+        color: 'info' as const,
+        variant: 'outlined' as const 
+      };
+    case '신작':
+      return { 
+        color: 'error' as const,
+        sx: { fontWeight: 'bold' } 
+      };
+    default:
+      return { color: 'default' as const };
+  }
+};
 
 export default function ContentDetail() {
   // console.log 없으면 경고 뜨는 이유: 변수를 사용하지 않았기 때문인데 의도적으로 _ 접두사를 붙여도 에러 뜨는 이유 : 타입 추론 때문에 에러 뜨는 것 같음
@@ -63,17 +96,58 @@ export default function ContentDetail() {
           >
             {mockContentDetail.title}
           </Typography>
-          <Typography 
-            variant="h6" 
-            color="text.secondary" 
-            align="center"  // 작가 이름 중앙 정렬
-            gutterBottom
-            sx={{ 
-              fontSize: { xs: '1rem', sm: '1.25rem' }  // 반응형 폰트 크기
-            }}
-          >
-            {mockContentDetail.author}
-          </Typography>
+
+          {/* Chips 추가 */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1, 
+            mb: 2
+          }}>
+            {/* 첫 줄: 상태 + 콘텐츠 타입 + 오리지널 */}
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {mockContentDetail.status && (
+                <Chip 
+                  label={mockContentDetail.status}
+                  size="small"
+                  {...getStatusChipProps(mockContentDetail.status)}
+                />
+              )}
+              <Chip 
+                label={contentType === 'webtoon' ? '웹툰' : '웹소설'} 
+                color="primary"
+                size="small"
+              />
+              {mockContentDetail.isOriginal && (
+                <Chip 
+                  label="오리지널"
+                  size="small"
+                  color="secondary"
+                  sx={{ borderRadius: '4px' }}  // 더 직각에 가깝게
+                />
+              )}
+            </Box>
+
+            {/* 두 번째 줄: 작가 정보 */}
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+              {mockContentDetail.authors.map((author, index) => (
+                <Chip 
+                  key={index}
+                  label={`${author.name}: ${author.role}`}
+                  variant="outlined"
+                  size="small"
+                  sx={{ 
+                    borderRadius: '4px',  // 더 직각에 가깝게
+                    '& .MuiChip-label': {  // 라벨 스타일 조정
+                      px: 1  // 좌우 패딩 줄임
+                    }
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+
           <Typography 
             variant="body1" 
             sx={{ 
