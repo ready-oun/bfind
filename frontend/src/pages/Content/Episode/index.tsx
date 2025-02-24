@@ -123,6 +123,36 @@ export default function EpisodeViewer() {
     navigate(`/${contentType}/${id}/episode/${targetEpisodeId}`)
   }, [contentType, id, navigate])
 
+  // 키보드 이벤트 핸들러 추가
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      switch(e.key) {
+        case 'ArrowLeft':
+          // 이전화
+          if (currentEpisodeData.hasPrevious) {
+            handleNavigation(currentEpisodeData.prevEpisodeId)
+          }
+          break;
+        case 'ArrowRight':
+          // 다음화
+          if (currentEpisodeData.hasNext) {
+            handleNavigation(currentEpisodeData.nextEpisodeId)
+          }
+          break;
+        case ' ':  // 스페이스바
+          // 한 페이지 스크롤
+          window.scrollBy({
+            top: window.innerHeight * 0.9,
+            behavior: 'smooth'
+          })
+          break;
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [currentEpisodeData, handleNavigation])
+
   if (contentType !== 'webtoon') return null
 
   return (
