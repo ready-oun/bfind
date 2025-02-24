@@ -15,6 +15,7 @@ const generateItems = (
     title: `${prefix} ${i + 1}`, // 아이템 제목
     author: `작가${i + 1}`, // 아이템 저자
     thumbnailUrl: 'https://placehold.co/200x280', // 아이템 썸네일 이미지 주소
+    contentType,  // contentType 추가
     // 신작이 아닐 경우에만 최신화와 업데이트 날짜 표시
     ...((!isNew) && {
       // isNew가 false일 때만 아래 정보 추가
