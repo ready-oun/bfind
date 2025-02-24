@@ -1,18 +1,24 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Box, Skeleton, LinearProgress, IconButton, Paper } from '@mui/material'
 import { ArrowBack, ArrowForward } from '@mui/icons-material'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
-// 임시 더미 데이터를 함수로 변경
-const getMockEpisodeData = (episodeId: string) => ({
-  id: parseInt(episodeId),
-  title: `${episodeId}화`,
-  contentImages: Array(30).fill(0).map(() => 'https://placehold.co/800x1200'),  // 이미지 개수 증가
-  hasPrevious: parseInt(episodeId) > 1,
-  hasNext: parseInt(episodeId) < 10,
-  prevEpisodeId: parseInt(episodeId) > 1 ? parseInt(episodeId) - 1 : null,
-  nextEpisodeId: parseInt(episodeId) < 10 ? parseInt(episodeId) + 1 : null // 실제로는 API에서 전체 에피소드 수를 받아와서 처리
-})
+// 이미지 URL을 미리 생성해서 재사용
+const MOCK_IMAGES = Array(30).fill('https://placehold.co/800x1200')
+
+// 데이터 생성 함수 수정
+const getMockEpisodeData = (episodeId: string) => {
+  const id = parseInt(episodeId)
+  return {
+    id,
+    title: `${id}화`,
+    contentImages: MOCK_IMAGES,  // 미리 생성된 배열 재사용
+    hasPrevious: id > 1,
+    hasNext: id < 10,
+    prevEpisodeId: id > 1 ? id - 1 : null,
+    nextEpisodeId: id < 10 ? id + 1 : null
+  }
+}
 
 export default function EpisodeViewer() {
   const { contentType, id, episodeId } = useParams<{
@@ -21,21 +27,67 @@ export default function EpisodeViewer() {
     episodeId: string;
   }>()
   const navigate = useNavigate()
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const [loadedImages, setLoadedImages] = useState<number[]>([])
   const [showNavigation, setShowNavigation] = useState(true)
+  const imageCache = useRef<Set<string>>(new Set())
+  const isLoadingComplete = useRef<boolean>(false)
   
-  const currentEpisodeData = getMockEpisodeData(episodeId!)
+  const currentEpisodeData = useMemo(() => 
+    getMockEpisodeData(episodeId!),
+    [episodeId]
+  )
 
-  // handleNavigation 함수를 useCallback으로 메모이제이션
-  const handleNavigation = useCallback((targetEpisodeId: number | null) => {
-    if (targetEpisodeId === null) return;
-    navigate(`/${contentType}/${id}/episode/${targetEpisodeId}`);
-  }, [contentType, id, navigate]);  // 의존성 배열에 필요한 값들만 포함
-
-  // 스크롤 이벤트 핸들러 (쓰로틀링 유지)
+  // 페이지 전환 시 초기화
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null;
+    setLoadedImages([])
+    isLoadingComplete.current = false
+    window.scrollTo(0, 0)
+  }, [episodeId])
 
+  // 이미지 프리로딩
+  useEffect(() => {
+    const preloadImages = async () => {
+      const images = currentEpisodeData.contentImages.map((url, index) => {
+        if (imageCache.current.has(`${episodeId}-${url}`)) {
+          handleImageLoad(index)
+          return null
+        }
+        
+        return new Promise((resolve) => {
+          const img = new Image()
+          img.onload = () => {
+            imageCache.current.add(`${episodeId}-${url}`)
+            handleImageLoad(index)
+            resolve(null)
+          }
+          img.src = url
+        })
+      })
+
+      await Promise.all(images.filter(Boolean))
+    }
+
+    preloadImages()
+  }, [currentEpisodeData.contentImages, episodeId])
+
+  // 이미지 로드 핸들러
+  const handleImageLoad = useCallback((index: number) => {
+    if (isLoadingComplete.current) return
+    
+    setLoadedImages(prev => {
+      if (prev.includes(index)) return prev
+      const newImages = [...prev, index].sort((a, b) => a - b)
+      
+      if (newImages.length === currentEpisodeData.contentImages.length) {
+        isLoadingComplete.current = true
+      }
+      
+      return newImages
+    })
+  }, [currentEpisodeData.contentImages.length])
+
+  // 스크롤 이벤트 핸들러
+  useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       const isAtTop = currentScrollY < 100
@@ -43,50 +95,22 @@ export default function EpisodeViewer() {
         window.innerHeight + currentScrollY >= 
         document.documentElement.scrollHeight - 100
 
-      if (isAtTop || isAtBottom) {
-        setShowNavigation(true)
-      } else {
-        setShowNavigation(false)
-      }
+      setShowNavigation(isAtTop || isAtBottom)
     }
 
-    const throttledScroll = () => {
-      if (!timeoutId) {
-        timeoutId = setTimeout(() => {
-          handleScroll();
-          timeoutId = null;
-        }, 100);
-      }
-    };
-
-    window.addEventListener('scroll', throttledScroll, { passive: true })
-    
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      window.removeEventListener('scroll', throttledScroll)
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 페이지 전환 시 초기화
-  useEffect(() => {
-    setLoadedImages(new Set())
-    window.scrollTo(0, 0)
-    setShowNavigation(true)
-  }, [episodeId])
+  // 네비게이션 핸들러
+  const handleNavigation = useCallback((targetEpisodeId: number | null) => {
+    if (!targetEpisodeId) return
+    navigate(`/${contentType}/${id}/episode/${targetEpisodeId}`)
+  }, [contentType, id, navigate])
 
-  // 이미지 로딩 핸들러 단순화
-  const handleImageLoad = (index: number) => {
-    setLoadedImages(prev => {
-      if (prev.has(index)) return prev;
-      const newSet = new Set(prev);
-      newSet.add(index);
-      return newSet;
-    });
-  }
+  if (contentType !== 'webtoon') return null
 
-  const isAllImagesLoaded = loadedImages.size === currentEpisodeData.contentImages.length
-
-  return contentType === 'webtoon' ? (
+  return (
     <>
       <Paper 
         elevation={3}
@@ -103,8 +127,6 @@ export default function EpisodeViewer() {
           zIndex: 1000,
           transition: 'transform 0.2s ease-in-out',
           opacity: showNavigation ? 1 : 0,
-          visibility: showNavigation ? 'visible' : 'hidden',
-          pointerEvents: showNavigation ? 'auto' : 'none',
         }}
       >
         <IconButton 
@@ -121,35 +143,22 @@ export default function EpisodeViewer() {
         </IconButton>
       </Paper>
 
-      <Container 
-        maxWidth="md" 
-        sx={{ 
-          py: 2,
-          px: { xs: 0, sm: 2 },
-          bgcolor: 'background.default',
-          mb: 10,
-          minHeight: '100vh'
-        }}
-      >
-        {!isAllImagesLoaded && (
+      <Container maxWidth="md" sx={{ py: 2, px: { xs: 0, sm: 2 }, mb: 10 }}>
+        {!isLoadingComplete.current && loadedImages.length < currentEpisodeData.contentImages.length && (
           <LinearProgress 
             variant="determinate" 
-            value={(loadedImages.size / currentEpisodeData.contentImages.length) * 100}
+            value={(loadedImages.length / currentEpisodeData.contentImages.length) * 100}
             sx={{ mb: 2 }}
           />
         )}
 
-        <Box sx={{ 
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
-        }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {currentEpisodeData.contentImages.map((imageUrl, index) => (
             <Box 
               key={`${episodeId}-${index}`}
               sx={{ position: 'relative' }}
             >
-              {!loadedImages.has(index) && (
+              {!loadedImages.includes(index) && (
                 <Skeleton 
                   variant="rectangular" 
                   width="100%"
@@ -157,20 +166,14 @@ export default function EpisodeViewer() {
                   animation="wave"
                 />
               )}
-              <Box
-                component="img"
+              <img
                 src={imageUrl}
                 alt={`컷 ${index + 1}`}
-                onLoad={() => handleImageLoad(index)}
-                loading="lazy"
-                sx={{
+                style={{
                   width: '100%',
                   height: 'auto',
                   display: 'block',
-                  maxWidth: '100%',
-                  opacity: loadedImages.has(index) ? 1 : 0,
-                  visibility: loadedImages.has(index) ? 'visible' : 'hidden',
-                  position: 'relative',  // position을 항상 relative로 고정
+                  opacity: loadedImages.includes(index) ? 1 : 0,
                 }}
               />
             </Box>
@@ -178,5 +181,5 @@ export default function EpisodeViewer() {
         </Box>
       </Container>
     </>
-  ) : null
+  )
 } 
