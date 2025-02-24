@@ -14,6 +14,16 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom'
 import { mockWebtoons, mockNovels, ContentItem, ContentStatus } from '../../../mocks/contents'
 
+// TODO: [작품 목록/상세]
+// - 작품 필터링 및 정렬 기능
+// - 작품 검색 자동완성
+// - 작품 평점/리뷰 시스템
+// - 좋아요/북마크 기능
+// - 공유하기 기능
+// - 연재 알림 설정
+// - 작품 신고하기
+// - 성인 인증 로직 
+
 // 상태별 Chip 색상 설정
 const getStatusChipColor = (status: ContentStatus) => {
   switch (status) {

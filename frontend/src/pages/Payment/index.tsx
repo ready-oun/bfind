@@ -46,6 +46,38 @@ const PAYMENT_METHODS = [
   { id: 'toss', label: '토스페이', icon: <TossIcon /> },
 ]
 
+// TODO: [API 연동]
+// - 사용자의 실제 보유 포인트 조회 API 연동
+// - 결제 처리 API 연동 (PG사 연동)
+// - 결제 완료 후 코인 적립 API 연동
+// - 결제 실패 시 에러 처리 및 재시도 로직
+
+// TODO: [UI/UX 개선]
+// - 결제 진행 상태 표시 (프로그레스바 또는 스텝퍼)
+// - 결제 수단별 입력 폼 추가 (카드번호, 계좌번호 등)
+// - 결제 완료/실패 모달 또는 페이지 구현
+// - 모바일 결제 UI 최적화
+// - 결제 수단별 아이콘 이미지로 교체
+
+// TODO: [기능 추가]
+// - 자주 사용하는 결제수단 저장 기능
+// - 결제 내역 저장 및 조회 기능
+// - 영수증 발급 기능
+// - 정기 결제(구독) 옵션 추가
+// - 쿠폰 사용 기능 추가
+
+// TODO: [보안]
+// - 결제 정보 암호화
+// - 본인인증 절차 추가
+// - 결제 금액 위변조 방지
+// - 비정상 결제 시도 차단
+
+// TODO: [검증]
+// - 입력값 유효성 검사 강화
+// - 결제 금액 계산 로직 검증
+// - 포인트 사용 제한 조건 추가
+// - 동시 결제 처리 검증
+
 export default function Payment() {
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null)
   const [paymentMethod, setPaymentMethod] = useState('card')
