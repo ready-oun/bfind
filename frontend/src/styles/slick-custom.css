@@ -1,0 +1,25 @@
+/* 도트 네비게이션 스타일링 */
+.slick-dots {
+  bottom: 20px;
+}
+
+.slick-dots li button:before {
+  color: white;
+  opacity: 0.5;
+  font-size: 8px;
+}
+
+.slick-dots li.slick-active button:before {
+  color: white;
+  opacity: 1;
+}
+
+/* 슬라이드 트랜지션 효과 */
+.slick-slide {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.slick-slide.slick-active {
+  opacity: 1;
+} 

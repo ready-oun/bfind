@@ -1,6 +1,10 @@
 import { Container, Typography, Tabs, Tab, Box } from '@mui/material'
 import { useState, useRef } from 'react'
 import ContentCard from '@/components/ui/ContentCard'
+import Slider from 'react-slick'
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
+// import "slick-carousel/slick/slick-custom.css"
 
 // 더미 데이터 생성 헬퍼 함수
 const generateItems = (
@@ -126,6 +130,28 @@ function ContentList({ items }: { items: any[] }) {
   )
 }
 
+// 캐러셀용 임시 데이터
+const carouselItems = [
+  {
+    id: 1,
+    imageUrl: 'https://via.placeholder.com/1200x400',
+    title: '오늘의 추천 1',
+    link: '/webtoon/1'
+  },
+  {
+    id: 2,
+    imageUrl: 'https://via.placeholder.com/1200x400',
+    title: '오늘의 추천 2',
+    link: '/webtoon/2'
+  },
+  {
+    id: 3,
+    imageUrl: 'https://via.placeholder.com/1200x400',
+    title: '오늘의 추천 3',
+    link: '/novel/1'
+  }
+]
+
 export default function Home() {
   const [categoryTab, setCategoryTab] = useState(0) // 카테고리 탭 상태 관리
 
@@ -135,48 +161,92 @@ export default function Home() {
 
   const currentData = categoryTab === 0 ? mockWebtoons : mockNovels // 현재 선택된 카테고리 데이터 설정
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+    pauseOnHover: false
+  }
+
   return (
-    <Container>
-      {/* 오늘의 추천 섹션 */}
-      <Typography variant="h4" component="h2" sx={{ mb: 4 }}>
-        오늘의 추천
-      </Typography>
-
-      {/* 카테고리 탭 섹션 */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
-        <Tabs 
-          value={categoryTab} 
-          onChange={handleCategoryChange}
-          aria-label="content category tabs"
-        >
-          <Tab label="웹툰" />
-          <Tab label="웹소설" />
-        </Tabs>
-      </Box>
-
-      {/* 인기 섹션 */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
-          인기 {categoryTab === 0 ? '웹툰' : '웹소설'}
+    <Container maxWidth="lg">
+      <Container>
+        {/* 오늘의 추천 섹션 */}
+        <Typography variant="h4" component="h4" sx={{ mb: 4 }}>
+          오늘의 추천
         </Typography>
-        <ContentList items={currentData.popular} />
-      </Box>
 
-      {/* 신작 섹션 */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
-          신작 {categoryTab === 0 ? '웹툰' : '웹소설'}
-        </Typography>
-        <ContentList items={currentData.new} />
-      </Box>
+        {/* 캐러셀 */}
+        <Box sx={{ mb: 4 }}>
+          <Slider {...settings}>
+            {carouselItems.map((item) => (
+              <Box 
+                key={item.id}
+                component="a"
+                href={item.link}
+                sx={{
+                  display: 'block',
+                  position: 'relative',
+                  '&:focus': { outline: 'none' }
+                }}
+              >
+                <Box
+                  component="img"
+                  src={item.imageUrl}
+                  alt={item.title}
+                  sx={{
+                    width: '100%',
+                    height: { xs: '160px', sm: '240px', md: '320px' },  // 16:9 비율 유지하면서 반응형
+                    objectFit: 'cover',
+                    borderRadius: 1
+                  }}
+                />
+              </Box>
+            ))}
+          </Slider>
+        </Box>
 
-      {/* 업데이트 섹션 */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
-          업데이트된 {categoryTab === 0 ? '웹툰' : '웹소설'}
-        </Typography>
-        <ContentList items={currentData.updated} />
-      </Box>
+        {/* 카테고리 탭 섹션 */}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
+          <Tabs 
+            value={categoryTab} 
+            onChange={handleCategoryChange}
+            aria-label="content category tabs"
+          >
+            <Tab label="웹툰" />
+            <Tab label="웹소설" />
+          </Tabs>
+        </Box>
+
+        {/* 인기 섹션 */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
+            인기 {categoryTab === 0 ? '웹툰' : '웹소설'}
+          </Typography>
+          <ContentList items={currentData.popular} />
+        </Box>
+
+        {/* 신작 섹션 */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
+            신작 {categoryTab === 0 ? '웹툰' : '웹소설'}
+          </Typography>
+          <ContentList items={currentData.new} />
+        </Box>
+
+        {/* 업데이트 섹션 */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h5" component="h3" sx={{ mb: 2 }}>
+            업데이트된 {categoryTab === 0 ? '웹툰' : '웹소설'}
+          </Typography>
+          <ContentList items={currentData.updated} />
+        </Box>
+      </Container>
     </Container>
   )
 }
