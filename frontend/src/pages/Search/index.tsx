@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Container, TextField, Box, Typography } from '@mui/material'
 import { mockWebtoons, mockNovels } from '../../mocks/contents'
 import ContentCard from '../../components/ui/ContentCard'
@@ -6,21 +6,30 @@ import ContentCard from '../../components/ui/ContentCard'
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('')
   
-  // 모든 콘텐츠를 대상으로 검색
-  const searchResults = [...mockWebtoons.all, ...mockNovels.all]
-    .filter(content => 
-      content.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      content.authors.some(author => 
-        author.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // 웹툰과 소설 데이터를 한 번만 결합
+  const allContents = useMemo(() => [
+    ...mockWebtoons.all.map(content => ({ ...content, type: 'webtoon' })),
+    ...mockNovels.all.map(content => ({ ...content, type: 'novel' }))
+  ], [])
+  
+  const searchResults = useMemo(() => 
+    allContents
+      .filter(content => 
+        content.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        content.authors?.some(author => 
+          author.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       )
-    )
-    .map(content => ({
-      ...content,
-      // ContentCard에 필요한 형식으로 데이터 변환
-      author: content.authors.map(a => a.name).join(', '),
-      thumbnailUrl: content.thumbnail,
-      contentType: content.type === 'webtoon' ? 'webtoon' : 'novel'
-    }))
+      .map(content => ({
+        id: content.id,
+        title: content.title || '',
+        author: Array.isArray(content.authors) 
+          ? content.authors.map(a => a.name).filter(Boolean).join(', ') 
+          : '작가미상',
+        thumbnailUrl: content.thumbnail || 'https://placehold.co/200x280',
+        contentType: content.type || 'novel',
+        isNew: false,
+      })), [searchQuery, allContents])
 
   return (
     <Container maxWidth="lg">
@@ -35,7 +44,6 @@ export default function Search() {
           sx={{ mb: 4 }}
         />
 
-        {/* 검색 결과 */}
         {searchQuery ? (
           searchResults.length > 0 ? (
             <Box sx={{ 
@@ -46,7 +54,12 @@ export default function Search() {
               {searchResults.map((content) => (
                 <ContentCard 
                   key={`${content.contentType}-${content.id}`}
-                  {...content}
+                  id={content.id}
+                  title={content.title}
+                  author={content.author}
+                  thumbnailUrl={content.thumbnailUrl}
+                  contentType={content.contentType as 'webtoon' | 'novel'}
+                  isNew={content.isNew}
                 />
               ))}
             </Box>
