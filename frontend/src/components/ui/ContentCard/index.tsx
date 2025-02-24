@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 interface ContentCardProps {
   id: number        // id 추가
   title: string // 카드 제목
-  author: string // 카드 저자
-  thumbnailUrl: string // 썸네일 이미지 주소
+  author: string  // authors -> author로 되돌림
+  thumbnailUrl: string  // thumbnailUrl -> thumbnail로 변경
   latestEpisode?: string  // 웹툰/웹소설의 최신화
   updateDate?: string     // 업데이트 날짜
   isNew?: boolean        // 신작 표시
@@ -17,8 +17,8 @@ interface ContentCardProps {
 export default function ContentCard({
   id, // id 추가
   title, // 카드 제목
-  author, // 카드 저자
-  thumbnailUrl, // 썸네일 이미지 주소
+  author,  // authors -> author로 되돌림
+  thumbnailUrl,  // 변경
   latestEpisode, // 최신화 정보
   updateDate, // 업데이트 날짜
   isNew, // 신작 표시
@@ -57,7 +57,7 @@ export default function ContentCard({
       <CardMedia
         component="img" // 이미지 요소
         height={280} // 이미지 높이
-        image={thumbnailUrl} // 이미지 주소
+        image={thumbnailUrl}  // 변경
         alt={title} // 이미지 대체 텍스트
         sx={{ objectFit: 'cover' }} // 이미지 크기 조정
       />
@@ -107,7 +107,7 @@ export default function ContentCard({
             mb: 0.5  // 마진 추가
           }}
         >
-          {author}
+          {author}  
         </Typography>
         {(latestEpisode && updateDate) && (
           <Typography 

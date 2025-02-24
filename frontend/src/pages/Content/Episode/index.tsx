@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Box, Skeleton, LinearProgress, IconButton, Paper, Typography, Button } from '@mui/material'
-import { ArrowBack, ArrowForward } from '@mui/icons-material'
+import { Container, Box, Skeleton, LinearProgress, IconButton, Paper, Typography, Button, AppBar, Toolbar } from '@mui/material'
+import { ArrowBack, ArrowForward, Home as HomeIcon, List as ListIcon, Bookmark as BookmarkIcon, BookmarkBorder as BookmarkBorderIcon } from '@mui/icons-material'
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 // 이미지 URL을 미리 생성해서 재사용
@@ -34,6 +34,7 @@ export default function EpisodeViewer() {
   const imageCache = useRef<Set<string>>(new Set())
   const isLoadingComplete = useRef<boolean>(false)
   const navigationTimeoutRef = useRef<number | undefined>(undefined)
+  const [isBookmarked, setIsBookmarked] = useState(false)
   
   const currentEpisodeData = useMemo(() => 
     getMockEpisodeData(episodeId!),
@@ -202,8 +203,53 @@ export default function EpisodeViewer() {
 
   return (
     <>
+      {/* 상단 네비게이션 바 수정 */}
+      <AppBar 
+        position="fixed" 
+        elevation={4}
+        sx={{ 
+          top: 0,
+          backgroundColor: 'background.paper',  // theme의 background.paper 사용
+          backdropFilter: 'blur(8px)',
+          transition: 'transform 0.2s',
+          transform: showNavigation ? 'translateY(0)' : 'translateY(-100%)',
+          zIndex: 1200,
+        }}
+      >
+        <Toolbar sx={{ minHeight: 56 }}>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ flex: 1, fontWeight: 500, color: 'text.primary' }}  // theme의 text.primary 사용
+          >
+            {currentEpisodeData.title}
+          </Typography>
+          
+          <IconButton 
+            onClick={() => navigate('/')}
+            sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
+          >
+            <HomeIcon />
+          </IconButton>
+          
+          <IconButton 
+            onClick={() => navigate(`/${contentType}/${id}`)}
+            sx={{ color: 'text.primary' }}
+          >
+            <ListIcon />
+          </IconButton>
+          
+          <IconButton 
+            onClick={() => setIsBookmarked(prev => !prev)}
+            sx={{ color: 'text.primary' }}
+          >
+            {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      {/* 하단 네비게이션도 동일하게 수정 */}
       <Paper 
-        elevation={3}
+        elevation={4}
         sx={{ 
           position: 'fixed',
           bottom: 20,
@@ -213,8 +259,9 @@ export default function EpisodeViewer() {
           gap: 2,
           p: 1,
           borderRadius: 5,
-          bgcolor: 'background.paper',
-          zIndex: 1000,
+          backgroundColor: 'background.paper',  // theme의 background.paper 사용
+          backdropFilter: 'blur(8px)',
+          zIndex: 1200,
           transition: 'transform 0.2s ease-in-out',
           opacity: showNavigation ? 1 : 0,
         }}
@@ -222,18 +269,26 @@ export default function EpisodeViewer() {
         <IconButton 
           onClick={() => handleNavigation(currentEpisodeData.prevEpisodeId)}
           disabled={!currentEpisodeData.hasPrevious}
+          sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
         >
           <ArrowBack />
         </IconButton>
         <IconButton 
           onClick={() => handleNavigation(currentEpisodeData.nextEpisodeId)}
           disabled={!currentEpisodeData.hasNext}
+          sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
         >
           <ArrowForward />
         </IconButton>
       </Paper>
 
-      <Container maxWidth="md" sx={{ py: 2, px: { xs: 0, sm: 2 }, mb: 10 }}>
+      {/* 콘텐츠 영역 */}
+      <Container maxWidth="md" sx={{ 
+        py: 2, 
+        px: { xs: 0, sm: 2 }, 
+        mb: 10,
+        mt: 7  // AppBar 높이에 맞춰 조정
+      }}>
         {isLoading && loadedImages.length < currentEpisodeData.contentImages.length && (
           <Box sx={{ width: '100%', mt: 2 }}>
             <LinearProgress 
