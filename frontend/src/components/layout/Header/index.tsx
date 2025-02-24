@@ -32,7 +32,10 @@ export default function Header() {
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton color="inherit">
+            <IconButton 
+              color="inherit"
+              onClick={() => navigate('/search')}
+            >
               <SearchIcon />
             </IconButton>
             <IconButton color="inherit">

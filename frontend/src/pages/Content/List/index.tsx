@@ -31,6 +31,11 @@ const getStatusChipColor = (status: ContentStatus) => {
   }
 }
 
+interface ContentListProps {
+  contentType: 'webtoon' | 'novel'  // contentType이 필수 prop으로 되어있을 것 같네요
+  contents: ContentItem[]
+}
+
 export default function ContentList() {
   const navigate = useNavigate()
   const location = useLocation()
