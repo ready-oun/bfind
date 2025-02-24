@@ -33,7 +33,7 @@ export default function EpisodeViewer() {
   const [isLoading, setIsLoading] = useState(true)
   const imageCache = useRef<Set<string>>(new Set())
   const isLoadingComplete = useRef<boolean>(false)
-  const navigationTimeoutRef = useRef<number>()
+  const navigationTimeoutRef = useRef<number | undefined>(undefined)
   
   const currentEpisodeData = useMemo(() => 
     getMockEpisodeData(episodeId!),
