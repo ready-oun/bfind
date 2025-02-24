@@ -1,8 +1,9 @@
 import { AppBar, Box, Container, IconButton, Toolbar, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
-import PersonIcon from '@mui/icons-material/Person'
+import UserMenu from './UserMenu'
+import { LibraryBooks as LibraryIcon } from '@mui/icons-material'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -38,9 +39,10 @@ export default function Header() {
             >
               <SearchIcon />
             </IconButton>
-            <IconButton color="inherit">
-              <PersonIcon />
-            </IconButton>
+          </Box>
+
+          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <UserMenu />
           </Box>
         </Toolbar>
       </Container>
