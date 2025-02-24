@@ -32,6 +32,7 @@ export default function EpisodeViewer() {
     navigate(`/${contentType}/${id}/episode/${targetEpisodeId}`);
   }, [contentType, id, navigate]);  // 의존성 배열에 필요한 값들만 포함
 
+  // 스크롤 이벤트 핸들러 (쓰로틀링 유지)
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
 
@@ -66,12 +67,14 @@ export default function EpisodeViewer() {
     }
   }, [])
 
+  // 페이지 전환 시 초기화
   useEffect(() => {
     setLoadedImages(new Set())
     window.scrollTo(0, 0)
     setShowNavigation(true)
   }, [episodeId])
 
+  // 이미지 로딩 핸들러 단순화
   const handleImageLoad = (index: number) => {
     setLoadedImages(prev => {
       if (prev.has(index)) return prev;
