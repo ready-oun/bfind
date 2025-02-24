@@ -4,6 +4,8 @@ import ContentCard from '@/components/ui/ContentCard'
 import Slider from 'react-slick'
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import { ArrowForward, ArrowBack } from '@mui/icons-material'
+import { carouselItems } from '../../mocks/carousel'
 // import "slick-carousel/slick/slick-custom.css"
 
 // 더미 데이터 생성 헬퍼 함수
@@ -130,27 +132,62 @@ function ContentList({ items }: { items: any[] }) {
   )
 }
 
-// 캐러셀용 임시 데이터
-const carouselItems = [
-  {
-    id: 1,
-    imageUrl: 'https://via.placeholder.com/1200x400',
-    title: '오늘의 추천 1',
-    link: '/webtoon/1'
-  },
-  {
-    id: 2,
-    imageUrl: 'https://via.placeholder.com/1200x400',
-    title: '오늘의 추천 2',
-    link: '/webtoon/2'
-  },
-  {
-    id: 3,
-    imageUrl: 'https://via.placeholder.com/1200x400',
-    title: '오늘의 추천 3',
-    link: '/novel/1'
-  }
-]
+// 화살표 컴포넌트 수정
+const NextArrow = ({ onClick }: { onClick?: () => void }) => (
+  <Box
+    onClick={onClick}
+    sx={{
+      position: 'absolute',
+      right: 10,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      zIndex: 1,
+      cursor: 'pointer',
+      width: 40,
+      height: 40,
+      display: 'none',  // 기본적으로 숨김
+      alignItems: 'center',
+      justifyContent: 'center',
+      bgcolor: 'rgba(0, 0, 0, 0.3)',
+      borderRadius: '50%',
+      color: 'white',
+      transition: 'background-color 0.2s',
+      '&:hover': {
+        bgcolor: 'rgba(0, 0, 0, 0.5)'
+      }
+    }}
+  >
+    <ArrowForward sx={{ fontSize: 24 }} />
+  </Box>
+)
+
+const PrevArrow = ({ onClick }: { onClick?: () => void }) => (
+  <Box
+    onClick={onClick}
+    sx={{
+      position: 'absolute',
+      left: 10,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      zIndex: 1,
+      cursor: 'pointer',
+      width: 40,
+      height: 40,
+      display: 'none',  // 기본적으로 숨김
+      alignItems: 'center',
+      justifyContent: 'center',
+      bgcolor: 'rgba(0, 0, 0, 0.3)',
+      borderRadius: '50%',
+      color: 'white',
+      transition: 'background-color 0.2s',
+      '&:hover': {
+        bgcolor: 'rgba(0, 0, 0, 0.5)'
+      }
+    }}
+  >
+    <ArrowBack sx={{ fontSize: 24 }} />
+  </Box>
+)
 
 export default function Home() {
   const [categoryTab, setCategoryTab] = useState(0) // 카테고리 탭 상태 관리
@@ -162,27 +199,64 @@ export default function Home() {
   const currentData = categoryTab === 0 ? mockWebtoons : mockNovels // 현재 선택된 카테고리 데이터 설정
 
   const settings = {
-    dots: true,
+    dots: true,  // 하단 점 표시
+    dotsClass: 'slick-dots',  // 기본 dots 클래스 사용
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-    pauseOnHover: false
+    slidesToShow: 3,  // 3개 동시 표시
+    slidesToScroll: 3,  // 3개씩 스크롤
+    autoplay: false,  // 자동 재생 비활성화
+    arrows: false,  // 화살표 비활성화
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
   }
 
   return (
     <Container maxWidth="lg">
       <Container>
-        {/* 오늘의 추천 섹션 */}
-        <Typography variant="h4" component="h4" sx={{ mb: 4 }}>
-          오늘의 추천
+        <Typography variant="h4" component="h2" sx={{ mb: 4 }}>
+          Today's Recommendation
         </Typography>
 
-        {/* 캐러셀 */}
-        <Box sx={{ mb: 4 }}>
+        <Box 
+          sx={{ 
+            mb: 4,
+            '& .slick-track': {
+              display: 'flex',
+              gap: 2  // 슬라이드 간 간격
+            },
+            '& .slick-slide': {
+              height: 'auto'  // 높이 자동 조정
+            },
+            '& .slick-dots': {
+              bottom: -30,
+              '& li': {
+                margin: 0,
+                '& button:before': {
+                  fontSize: 8,
+                  color: 'grey.400'
+                }
+              },
+              '& li.slick-active button:before': {
+                color: 'primary.main'
+              }
+            }
+          }}
+        >
           <Slider {...settings}>
             {carouselItems.map((item) => (
               <Box 
@@ -190,9 +264,16 @@ export default function Home() {
                 component="a"
                 href={item.link}
                 sx={{
-                  display: 'block',
+                  display: 'block !important',  // !important로 슬라이더 스타일 오버라이드
                   position: 'relative',
-                  '&:focus': { outline: 'none' }
+                  aspectRatio: '3/4',  // 세로로 긴 비율
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  boxShadow: 3,  // 그림자 효과
+                  transition: 'transform 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-4px)'  // 호버 시 위로 살짝 떠오르는 효과
+                  }
                 }}
               >
                 <Box
@@ -201,9 +282,8 @@ export default function Home() {
                   alt={item.title}
                   sx={{
                     width: '100%',
-                    height: { xs: '160px', sm: '240px', md: '320px' },  // 16:9 비율 유지하면서 반응형
-                    objectFit: 'cover',
-                    borderRadius: 1
+                    height: '100%',
+                    objectFit: 'cover'
                   }}
                 />
               </Box>
