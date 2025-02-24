@@ -66,7 +66,7 @@ export default function ContentDetail() {
         display: 'flex', 
         flexDirection: 'column',
         gap: 4, 
-        py: 6,
+        // py: 6,
         borderBottom: '1px solid',
         borderColor: 'divider',
       }}>

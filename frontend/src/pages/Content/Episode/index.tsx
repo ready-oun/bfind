@@ -202,93 +202,92 @@ export default function EpisodeViewer() {
   }
 
   return (
-    <>
-      {/* 상단 네비게이션 바 수정 */}
-      <AppBar 
-        position="fixed" 
-        elevation={4}
-        sx={{ 
-          top: 0,
-          backgroundColor: 'background.paper',  // theme의 background.paper 사용
-          backdropFilter: 'blur(8px)',
-          transition: 'transform 0.2s',
-          transform: showNavigation ? 'translateY(0)' : 'translateY(-100%)',
-          zIndex: 1200,
-        }}
-      >
-        <Toolbar sx={{ minHeight: 56 }}>
-          <Typography 
-            variant="subtitle1" 
-            sx={{ flex: 1, fontWeight: 500, color: 'text.primary' }}  // theme의 text.primary 사용
-          >
-            {currentEpisodeData.title}
-          </Typography>
-          
+    <Container maxWidth="lg">
+      <Box sx={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}>
+        {/* 상단 네비게이션 바 수정 */}
+        <AppBar 
+          position="fixed" 
+          elevation={4}
+          sx={{ 
+            top: 0,
+            backgroundColor: 'background.paper',  // theme의 background.paper 사용
+            backdropFilter: 'blur(8px)',
+            transition: 'transform 0.2s',
+            transform: showNavigation ? 'translateY(0)' : 'translateY(-100%)',
+            zIndex: 1200,
+          }}
+        >
+          <Toolbar sx={{ minHeight: 56 }}>
+            <Typography 
+              variant="subtitle1" 
+              sx={{ flex: 1, fontWeight: 500, color: 'text.primary' }}  // theme의 text.primary 사용
+            >
+              {currentEpisodeData.title}
+            </Typography>
+            
+            <IconButton 
+              onClick={() => navigate('/')}
+              sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
+            >
+              <HomeIcon />
+            </IconButton>
+            
+            <IconButton 
+              onClick={() => navigate(`/${contentType}/${id}`)}
+              sx={{ color: 'text.primary' }}
+            >
+              <ListIcon />
+            </IconButton>
+            
+            <IconButton 
+              onClick={() => setIsBookmarked(prev => !prev)}
+              sx={{ color: 'text.primary' }}
+            >
+              {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+
+        {/* 하단 네비게이션도 동일하게 수정 */}
+        <Paper 
+          elevation={4}
+          sx={{ 
+            position: 'fixed',
+            bottom: 20,
+            left: '50%',
+            transform: `translateX(-50%) translateY(${showNavigation ? 0 : '100px'})`,
+            display: 'flex',
+            gap: 2,
+            p: 1,
+            borderRadius: 5,
+            backgroundColor: 'background.paper',  // theme의 background.paper 사용
+            backdropFilter: 'blur(8px)',
+            zIndex: 1200,
+            transition: 'transform 0.2s ease-in-out',
+            opacity: showNavigation ? 1 : 0,
+          }}
+        >
           <IconButton 
-            onClick={() => navigate('/')}
+            onClick={() => handleNavigation(currentEpisodeData.prevEpisodeId)}
+            disabled={!currentEpisodeData.hasPrevious}
             sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
           >
-            <HomeIcon />
+            <ArrowBack />
           </IconButton>
-          
           <IconButton 
-            onClick={() => navigate(`/${contentType}/${id}`)}
-            sx={{ color: 'text.primary' }}
+            onClick={() => handleNavigation(currentEpisodeData.nextEpisodeId)}
+            disabled={!currentEpisodeData.hasNext}
+            sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
           >
-            <ListIcon />
+            <ArrowForward />
           </IconButton>
-          
-          <IconButton 
-            onClick={() => setIsBookmarked(prev => !prev)}
-            sx={{ color: 'text.primary' }}
-          >
-            {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+        </Paper>
 
-      {/* 하단 네비게이션도 동일하게 수정 */}
-      <Paper 
-        elevation={4}
-        sx={{ 
-          position: 'fixed',
-          bottom: 20,
-          left: '50%',
-          transform: `translateX(-50%) translateY(${showNavigation ? 0 : '100px'})`,
-          display: 'flex',
-          gap: 2,
-          p: 1,
-          borderRadius: 5,
-          backgroundColor: 'background.paper',  // theme의 background.paper 사용
-          backdropFilter: 'blur(8px)',
-          zIndex: 1200,
-          transition: 'transform 0.2s ease-in-out',
-          opacity: showNavigation ? 1 : 0,
-        }}
-      >
-        <IconButton 
-          onClick={() => handleNavigation(currentEpisodeData.prevEpisodeId)}
-          disabled={!currentEpisodeData.hasPrevious}
-          sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
-        >
-          <ArrowBack />
-        </IconButton>
-        <IconButton 
-          onClick={() => handleNavigation(currentEpisodeData.nextEpisodeId)}
-          disabled={!currentEpisodeData.hasNext}
-          sx={{ color: 'text.primary' }}  // theme의 text.primary 사용
-        >
-          <ArrowForward />
-        </IconButton>
-      </Paper>
-
-      {/* 콘텐츠 영역 */}
-      <Container maxWidth="md" sx={{ 
-        py: 2, 
-        px: { xs: 0, sm: 2 }, 
-        mb: 10,
-        mt: 7  // AppBar 높이에 맞춰 조정
-      }}>
+        {/* 콘텐츠 영역 */}
         {isLoading && loadedImages.length < currentEpisodeData.contentImages.length && (
           <Box sx={{ width: '100%', mt: 2 }}>
             <LinearProgress 
@@ -342,7 +341,7 @@ export default function EpisodeViewer() {
             </Box>
           ))}
         </Box>
-      </Container>
-    </>
+      </Box>
+    </Container>
   )
 } 
