@@ -28,5 +28,14 @@ export const theme = createTheme({
       '"Noto Sans KR"',        // 한글 폰트
       'sans-serif'             // 폴백 폰트
     ].join(','),
+  },
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          minWidth: '360px',  // 모든 Container의 최소 너비를 360px로 설정
+        }
+      }
+    }
   }
 })
