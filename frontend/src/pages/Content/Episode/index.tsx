@@ -31,6 +31,7 @@ export default function EpisodeViewer() {
   const [showNavigation, setShowNavigation] = useState(true)
   const imageCache = useRef<Set<string>>(new Set())
   const isLoadingComplete = useRef<boolean>(false)
+  const navigationTimeoutRef = useRef<NodeJS.Timeout>()
   
   const currentEpisodeData = useMemo(() => 
     getMockEpisodeData(episodeId!),
@@ -102,6 +103,20 @@ export default function EpisodeViewer() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // 이미지 클릭/터치 핸들러
+  const handleImageInteraction = useCallback(() => {
+    setShowNavigation(prev => !prev)
+    
+    // 3초 후 네비게이션 숨기기
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current)
+    }
+    
+    navigationTimeoutRef.current = setTimeout(() => {
+      setShowNavigation(false)
+    }, 3000)
+  }, [])
+
   // 네비게이션 핸들러
   const handleNavigation = useCallback((targetEpisodeId: number | null) => {
     if (!targetEpisodeId) return
@@ -156,7 +171,12 @@ export default function EpisodeViewer() {
           {currentEpisodeData.contentImages.map((imageUrl, index) => (
             <Box 
               key={`${episodeId}-${index}`}
-              sx={{ position: 'relative' }}
+              sx={{ 
+                position: 'relative',
+                // cursor: 'none' // 다른 옵션 : 'pointer'
+              }}
+              onClick={handleImageInteraction}
+              onTouchStart={handleImageInteraction}
             >
               {!loadedImages.includes(index) && (
                 <Skeleton 
