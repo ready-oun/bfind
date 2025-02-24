@@ -53,6 +53,10 @@ export default function ContentDetail() {
   const { contentType, id } = useParams()
   const navigate = useNavigate()
 
+  const handleEpisodeClick = (episodeId: number) => {
+    navigate(`/${contentType}/${id}/episode/${episodeId}`)  // 예: /webtoon/1/episode/1
+  }
+
   return (
     <Container maxWidth="lg">
       {/* 작품 정보 영역 */}
@@ -174,18 +178,37 @@ export default function ContentDetail() {
                 gap: 3,  // 간격 늘림
                 p: 2,
                 borderRadius: 1,
-                bgcolor: 'background.paper'
+                bgcolor: 'background.paper',
+                boxShadow: 1,  // 약간의 그림자 추가
+                transition: 'all 0.2s ease',  // 부드러운 전환 효과
+                '&:hover': {
+                  boxShadow: 3,  // 호버 시 그림자 강화
+                  transform: 'translateY(-2px)',  // 호버 시 살짝 위로
+                  cursor: 'pointer'
+                }
               }}
+              onClick={() => handleEpisodeClick(episode.id)}  // 클릭 핸들러 추가
             >
               <Box
                 component="img"
                 src={episode.thumbnail}
                 alt={episode.title}
-                sx={{ width: 120, height: 80, objectFit: 'cover' }}
+                sx={{ 
+                  width: 120, 
+                  height: 80, 
+                  objectFit: 'cover',
+                  borderRadius: 1,
+                  flexShrink: 0  // 이미지 크기 고정
+                }}
               />
-              <Box>
-                <Typography variant="h6">{episode.title}</Typography>
-                <Typography color="text.secondary">{episode.date}</Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'center',
+                flex: 1  // 남은 공간 채우기
+              }}>
+                <Typography variant="h6" sx={{ mb: 0.5 }}>{episode.title}</Typography>
+                <Typography color="text.secondary" variant="body2">{episode.date}</Typography>
               </Box>
             </Box>
           ))}
