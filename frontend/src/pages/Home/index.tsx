@@ -3,30 +3,48 @@ import { useState, useRef } from 'react'
 import ContentCard from '@/components/ui/ContentCard'
 
 // 더미 데이터 생성 헬퍼 함수
-const generateItems = (prefix: string, count: number, type: 'webtoon' | 'novel' | 'new') => {
+const generateItems = (
+  prefix: string, // 제목 접두사 (예: '인기 웹툰', '신작 웹툰', '업데이트 웹툰')
+  count: number, // 생성할 아이템 수
+  contentType: 'webtoon' | 'novel', // 콘텐츠 타입 (예: 'webtoon', 'novel')
+  isNew: boolean = false // 신작 여부 (기본값: false)
+) => {
   return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    title: `${prefix} ${i + 1}`,
-    author: `작가${i + 1}`,
-    thumbnailUrl: 'https://placehold.co/200x280',
-    latestEpisode: `${Math.floor(Math.random() * 100 + 1)}화`,
-    updateDate: '2024.03.15',
-    isNew: type === 'new'
+    // length: count로 빈 배열 생성, 각 요소마다 콜백 함수 실행
+    id: i + 1, // 아이템 고유 ID 1부터 시작 
+    title: `${prefix} ${i + 1}`, // 아이템 제목
+    author: `작가${i + 1}`, // 아이템 저자
+    thumbnailUrl: 'https://placehold.co/200x280', // 아이템 썸네일 이미지 주소
+    // 신작이 아닐 경우에만 최신화와 업데이트 날짜 표시
+    ...((!isNew) && {
+      // isNew가 false일 때만 아래 정보 추가
+      latestEpisode: `${Math.floor(Math.random() * 100 + 1)}화`, // 최신화 정보 (1~100 사이 랜덤 화수)
+      updateDate: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // 업데이트 날짜 // 최근 7일 내 랜덤 날짜를 "월.일" 형식으로
+        .toLocaleDateString('ko-KR', { 
+          month: 'numeric', 
+          day: 'numeric' 
+        })
+    }),
+    isNew
   }))
 }
 
 // 테스트용 데이터
 const mockWebtoons = {
-  popular: generateItems('인기 웹툰', 12, 'webtoon'), // 인기 웹툰 12개
-  new: generateItems('신작 웹툰', 8, 'new'), // 신작 월툰 8개
-  updated: generateItems('업데이트 웹툰', 15, 'webtoon') // 업데이트 월툰 15개
+  popular: generateItems('인기 웹툰', 12, 'webtoon', false),  // 일반 콘텐츠
+  new: generateItems('신작 웹툰', 8, 'webtoon', true),      // 신작
+  updated: generateItems('업데이트 웹툰', 15, 'webtoon', false)  // 일반 콘텐츠
 }
 
 const mockNovels = {
-  popular: generateItems('인기 웹소설', 10, 'novel'), // 인기 웹소설 10개
-  new: generateItems('신작 웹소설', 6, 'new'), // 신작 웹소설 6개
-  updated: generateItems('업데이트 웹소설', 20, 'novel') // 업데이트 웹소설 20개
+  popular: generateItems('인기 웹소설', 10, 'novel', false),
+  new: generateItems('신작 웹소설', 6, 'novel', true),
+  updated: generateItems('업데이트 웹소설', 20, 'novel', false)
 }
+
+// DEBUG 위한 콘솔 로그 추가
+console.log('mockWebtoons.updated[0]:', mockWebtoons.updated[0])
+console.log('mockNovels.updated[0]:', mockNovels.updated[0])
 
 // ContentList 컴포넌트 수정
 function ContentList({ items }: { items: any[] }) {
