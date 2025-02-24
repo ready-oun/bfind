@@ -8,7 +8,7 @@ export default function Header() {
   const navigate = useNavigate()
 
   return (
-    <AppBar position="sticky" color="default">
+    <AppBar position="sticky">
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           <IconButton
