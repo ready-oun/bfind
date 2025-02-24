@@ -77,164 +77,293 @@ This project aims to build a web content platform that combines advanced DRM pro
 - **보안 계층:** 강화된 DRM, OAuth2/JWT 기반 인증, 블록체인 인증(옵션)
 - **배포 인프라:** 클라우드 기반 컨테이너화 및 CI/CD 파이프라인 구축
 
-### 설치 및 설정
-1. 레포지토리 클론 
-    ```bash
-    git clone https://github.com/yourusername/bind.git
-    cd bind
-    ```
-2.	의존성 설치
-    - 프론트엔드
-        ```bash
-        cd client
-        npm install
-        ```
-    - 백엔드
-        ```bash
-        cd ../server
-        npm install  # 또는 Java/Spring 사용 시 Maven/Gradle 활용
-        ```
-3. 환경 변수 설정
-4. 개발 서버 실행
-    - 프론트엔드
-        ```bash
-        npm run dev 
-        ```
-    - 백엔드
-        ```bash
-        npm run dev  # 또는 해당 Spring Boot 명령어 사용
-        ```
-5. 프로덕션 빌드 및 배포
-    - 프론트엔드와 백엔드의 프로덕션 빌드를 생성한 후 Docker로 컨테이너 이미지 빌드
-        ```bash
-        docker build -t bind .
-        ```
+## 프로젝트 구조
+```
+bfind/
+├── frontend/          # React 프론트엔드
+├── backend/           # Spring Boot 백엔드
+├── infrastructure/    # 인프라 설정
+│   ├── docker/       # Docker 설정
+│   └── terraform/    # (향후) IaC 설정
+└── docs/             # 프로젝트 문서
+    ├── architecture/ # 아키텍처 문서
+    ├── api/          # API 문서
+    ├── database/     # DB 설계 문서
+    └── setup/        # 환경 설정 가이드
+```
+
+## 기술 스택
+
+### 프론트엔드
+- React 18
+- TypeScript
+- MUI (Material-UI)
+- Redux Toolkit
+- Vite
+
+### 백엔드
+- Spring Boot 3.x
+- Kotlin
+- Spring Data JPA
+- Spring Security
+- PostgreSQL
+- Redis (캐싱)
+
+### 인프라
+- Docker
+- Docker Compose
+- AWS (예정)
+- GitHub Actions (CI/CD) (예정)
+
+## 시작하기
+
+### 사전 요구사항
+- Node.js 18.0.0 이상
+- Java 17 (Eclipse Temurin 추천)
+- Docker Desktop
+- IDE
+  - VSCode (프론트엔드)
+  - IntelliJ IDEA (백엔드)
+
+### 개발 환경 설정
+
+1. 저장소 클론
+```bash
+git clone https://github.com/ready-oun/bfind.git
+cd bfind
+```
+
+2. 프론트엔드 설정
+```bash
+cd frontend
+npm install
+```
+
+3. 백엔드 설정
+```bash
+cd backend
+./gradlew build
+```
+
+4. 환경 변수 설정 (예정)
+```bash
+# frontend/.env
+cp frontend/.env.example frontend/.env
+
+# backend/src/main/resources/application-dev.yml
+cp backend/src/main/resources/application-dev.yml.example backend/src/main/resources/application-dev.yml
+```
+
+5. Docker 컨테이너 실행 (예정)
+```bash
+docker-compose up -d
+```
+
+### 개발 서버 실행
+
+1. 프론트엔드 개발 서버
+```bash
+cd frontend
+npm run dev
+```
+
+2. 백엔드 개발 서버
+```bash
+cd backend
+./gradlew bootRun
+```
 
 ### 개발 프로세스 및 로드맵
-1.	기획 및 요구사항 정의: 상세 기능 명세, 와이어프레임, 데이터 모델링, API 문서 작성
-2.	디자인 및 프로토타입 제작: UI/UX 프로토타입 및 API 계약 수립
-3.	구현:
-	-	핵심 기능(콘텐츠 뷰어, DRM, 결제 시스템) 및 차별화 기능(커스텀 스토리, 리워드, 소장권)
-	-	CMS 및 정산 시스템 통합
-4.	테스트 및 코드 리뷰: 단위, 통합, e2e 테스트와 정기 코드 리뷰
-5.	배포 및 모니터링: 클라우드 배포, CI/CD 파이프라인, 실시간 모니터링 도구 도입
-6.	피드백 및 개선: 사용자 피드백 수집 및 기능 개선
+1. 기획 및 요구사항 정의: 상세 기능 명세, 와이어프레임, 데이터 모델링, API 문서 작성
+2. 디자인 및 프로토타입 제작: UI/UX 프로토타입 및 API 계약 수립
+3. 구현:
+   - 핵심 기능(콘텐츠 뷰어, DRM, 결제 시스템) 및 차별화 기능(커스텀 스토리, 리워드, 소장권)
+   - CMS 및 정산 시스템 통합
+4. 테스트 및 코드 리뷰: 단위, 통합, e2e 테스트와 정기 코드 리뷰
+5. 배포 및 모니터링: 클라우드 배포, CI/CD 파이프라인, 실시간 모니터링 도구 도입
+6. 피드백 및 개선: 사용자 피드백 수집 및 기능 개선
 
-### 기여 방법
--	Fork 후 Pull Request 제출
--	GitHub Issues를 통해 버그 리포트 및 기능 제안
--	커뮤니티 (Slack/Discord 등) 채널을 통한 토론 참여
+## API 문서 (예정)
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- API 문서: [docs/api/api-docs.md](docs/api/api-docs.md)
 
-### 라이선스
+## 데이터베이스 (예정)
+- ERD: [docs/database/database-docs.md](docs/database/database-docs.md)
+- 마이그레이션: backend/src/main/resources/db/migration
 
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
+## 아키텍처
+- 상세 설계: [docs/architecture/architecture-docs.md](docs/architecture/architecture-docs.md)
+- 인프라 구성: [infrastructure/dockerGuide.md](infrastructure/dockerGuide.md)
 
-#### 연락처
--	프로젝트 리드: heeyn.lim@gmail.com
--	GitHub: @ready-oun
+## 개발 가이드 (예정)
+- 코딩 컨벤션
+- Git 브랜치 전략
+- 커밋 메시지 규칙
+- PR 템플릿
+
+## 기여하기
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 라이선스
+MIT License - [LICENSE](LICENSE)
+
+## 연락처
+- 프로젝트 리드: heeyn.lim@gmail.com
+- GitHub: @ready-oun
 
 ---
 
 ## English Version
 
 ### Overview
-This project aims to build a secure and scalable platform for digital content such as webtoons and web novels. Through advanced DRM protection, various payment options, reader rewards, and custom story proposal features, we implement an innovative system that provides readers with permanent ownership rights beyond simple usage.
+This project aims to build a secure and scalable platform for webtoons and web novels. Through advanced DRM protection, various payment options, reader rewards, and custom story proposal features, we implement an innovative system that provides permanent ownership rights beyond simple usage.
 
 ### Core Features
-1. **Responsive Content Viewer**
-   - Optimized user interface for both PC and mobile
-2. **Enhanced DRM Protection**
-   - Prevent illegal copying through encryption, watermarking, and session authentication
-3. **Flexible Payment System**
-   - Support for full series/individual episode payments
-   - Tiered point accumulation based on charging amount
-4. **CMS and Internal Settlement System**
-   - Stable and secure content and settlement management using Java and Kotlin/Spring
-
-### Differentiating Features
-1. **Custom Story Creation and Reader Proposal Feature (FIND System)**
-   - Readers can create custom story summaries by selecting characters, storylines, genres, and world settings
-   - Real-time results and similar content recommendations/requests through AI or rule-based engines
-   - Story evaluation and feedback system
-   - Participation in the creation process of adopted stories
-
-2. **Reader Reward System**
-   - Reward points awarded when reader-proposed story settings are adopted for actual content
-   - Transparent operation through clear evaluation criteria and procedures
-
-3. **Permanent Ownership Rights and Digital Asset Certification**
-   - Issue 'permanent ownership rights' rather than simple usage rights when purchasing content
-   - Implement blockchain-based digital certification (e.g., NFT concept) and distributed storage technology to guarantee reader ownership even if platform operation ceases
-
-### Tech Stack
-- **Frontend:** React or Vue.js (web), React Native, Flutter, or native apps (mobile)
-- **Backend:**
-  - API and core features: Node.js (Express/Nest.js), Python (Flask/FastAPI), or Java (Spring Boot)
-  - CMS and internal settlement: Java/Kotlin + Spring
-- **Database and Search:** PostgreSQL/MySQL (relational data), MongoDB (NoSQL), Elasticsearch (search)
-- **Infrastructure:** AWS, GCP, Azure, Docker, Kubernetes, Serverless (AWS Lambda, Cloud Functions), API Gateway (Kong, NGINX)
-
-### System Architecture
-- **Frontend Client:** Web and mobile applications
-- **Backend Services:**
-  - API Server: Handle core business logic for payment, DRM, custom story creation
+- **Backend Services:** 
+  - API Server: Core business logic processing including payments, DRM, custom story creation
   - CMS & Settlement Engine: Content management and internal financial transaction management
 - **Database Layer:** Integration of relational DB, NoSQL, and Elasticsearch
-- **Security Layer:** Enhanced DRM, OAuth2/JWT-based authentication, blockchain certification (optional)
-- **Deployment Infrastructure:** Cloud-based containerization and CI/CD pipeline setup
+- **Security Layer:** Enhanced DRM, OAuth2/JWT-based authentication, blockchain authentication (optional)
+- **Deployment Infrastructure:** Cloud-based containerization and CI/CD pipeline
 
-### Installation and Setup
+## Project Structure
+```
+bfind/
+├── frontend/          # React frontend
+├── backend/           # Spring Boot backend
+├── infrastructure/    # Infrastructure setup
+│   ├── docker/       # Docker configuration
+│   └── terraform/    # (Future) IaC configuration
+└── docs/             # Project documentation
+    ├── architecture/ # Architecture docs
+    ├── api/          # API docs
+    ├── database/     # DB design docs
+    └── setup/        # Setup guides
+```
+
+## Tech Stack
+
+### Frontend
+- React 18
+- TypeScript
+- MUI (Material-UI)
+- Redux Toolkit
+- Vite
+
+### Backend
+- Spring Boot 3.x
+- Kotlin
+- Spring Data JPA
+- Spring Security
+- PostgreSQL
+- Redis (Caching)
+
+### Infrastructure
+- Docker
+- Docker Compose
+- AWS (Planned)
+- GitHub Actions (CI/CD) (Planned)
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18.0.0 or higher
+- Java 17 (Eclipse Temurin recommended)
+- Docker Desktop
+- IDE
+  - VSCode (Frontend)
+  - IntelliJ IDEA (Backend)
+
+### Development Setup
+
 1. Clone Repository
-    ```bash
-    git clone https://github.com/yourusername/bind.git
-    cd bind
-    ```
-2. Install Dependencies
-    - Frontend
-        ```bash
-        cd client
-        npm install
-        ```
-    - Backend
-        ```bash
-        cd ../server
-        npm install  # or use Maven/Gradle for Java/Spring
-        ```
-3. Set Environment Variables
-4. Run Development Server
-    - Frontend
-        ```bash
-        npm run dev
-        ```
-    - Backend
-        ```bash
-        npm run dev  # or use appropriate Spring Boot command
-        ```
-5. Production Build and Deployment
-    - Build container image with Docker after creating production builds for frontend and backend
-        ```bash
-        docker build -t bind .
-        ```
+```bash
+git clone https://github.com/ready-oun/bfind.git
+cd bfind
+```
+
+2. Frontend Setup
+```bash
+cd frontend
+npm install
+```
+
+3. Backend Setup
+```bash
+cd backend
+./gradlew build
+```
+
+4. Environment Variables Setup (Planned)
+```bash
+# frontend/.env
+cp frontend/.env.example frontend/.env
+
+# backend/src/main/resources/application-dev.yml
+cp backend/src/main/resources/application-dev.yml.example backend/src/main/resources/application-dev.yml
+```
+
+5. Run Docker Containers (Planned)
+```bash
+docker-compose up -d
+```
+
+### Running Development Servers
+
+1. Frontend Development Server
+```bash
+cd frontend
+npm run dev
+```
+
+2. Backend Development Server
+```bash
+cd backend
+./gradlew bootRun
+```
 
 ### Development Process and Roadmap
-1. Planning and Requirements Definition: Detailed feature specifications, wireframes, data modeling, API documentation
-2. Design and Prototype Creation: UI/UX prototype and API contract establishment
+1. Planning and Requirements: Detailed feature specifications, wireframes, data modeling, API documentation
+2. Design and Prototyping: UI/UX prototypes and API contract establishment
 3. Implementation:
-    - Core features (content viewer, DRM, payment system) and differentiating features (custom stories, rewards, ownership rights)
-    - CMS and settlement system integration
+   - Core features (content viewer, DRM, payment system) and differentiating features (custom stories, rewards, ownership rights)
+   - CMS and settlement system integration
 4. Testing and Code Review: Unit, integration, e2e tests and regular code reviews
-5. Deployment and Monitoring: Cloud deployment, CI/CD pipeline, real-time monitoring tools implementation
+5. Deployment and Monitoring: Cloud deployment, CI/CD pipeline, real-time monitoring tools
 6. Feedback and Improvement: User feedback collection and feature enhancement
 
-### How to Contribute
-- Submit Pull Requests after forking
-- Report bugs and suggest features through GitHub Issues
-- Participate in discussions through community channels (Slack/Discord etc.)
+## API Documentation (Planned)
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- API Docs: [docs/api/api-docs.md](docs/api/api-docs.md)
 
-### License
+## Database (Planned)
+- ERD: [docs/database/database-docs.md](docs/database/database-docs.md)
+- Migration: backend/src/main/resources/db/migration
 
-This project is distributed under the MIT License.
+## Architecture
+- Detailed Design: [docs/architecture/architecture-docs.md](docs/architecture/architecture-docs.md)
+- Infrastructure Setup: [infrastructure/dockerGuide.md](infrastructure/dockerGuide.md)
 
-#### Contact
+## Development Guide (Planned)
+- Coding Conventions
+- Git Branch Strategy
+- Commit Message Rules
+- PR Templates
+
+## Contributing
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+MIT License - [LICENSE](LICENSE)
+
+## Contact
 - Project Lead: heeyn.lim@gmail.com
 - GitHub: @ready-oun
